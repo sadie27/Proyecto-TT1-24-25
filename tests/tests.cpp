@@ -8,6 +8,8 @@ int tests_run = 0;
 #define _assert(test) do { if (!(test)) { FAIL(); return 1; } } while(0)
 #define _verify(test) do { int r=test(); tests_run++; if(r) return r; } while(0)
 
+
+//Test de Matrix
 int m_equals(Matrix A, Matrix B, double p) {
 	if (A.n_row != B.n_row || A.n_column != B.n_column)
 		return 0;
@@ -90,12 +92,53 @@ int m_zeros_01() {
     return 0;
 }
 
+//Tests de la 1era Iteración
+
+int i1_R_x_01(){
+	
+	Matrix B= R_x(4);
+	Matrix A(3,3);
+	A(1,1) = 1; A(1,2) =  0; 					A(1,3) = 0; 
+	A(2,1) = 0; A(2,2) = -0.653643620863612; 	A(2,3) = -0.756802495307928; 
+	A(3,1) = 0; A(3,2) =  0.756802495307928; 	A(3,3) = -0.653643620863612;
+	
+	_assert(m_equals(A, B, 1e-10));
+	
+}
+int i1_R_y_01(){
+	
+	Matrix B= R_y(4);
+	Matrix A(3,3);
+	A(1,1) = -0.653643620863612; 	A(1,2) = 0; A(1,3) = 0.756802495307928; 
+	A(2,1) = 0; 					A(2,2) = 1; A(2,3) = 0; 
+	A(3,1) =  -0.756802495307928; 	A(3,2) = 0; A(3,3) = -0.653643620863612;
+	
+	_assert(m_equals(A, B, 1e-10));
+	
+}
+int i1_R_z_01(){
+	
+	Matrix B= R_z(4);
+	Matrix A(3,3);
+	A(1,1) = -0.653643620863612; 	A(1,2) = -0.756802495307928 ; 	A(1,3) = 0; 
+	A(2,1) = 0.756802495307928; 	A(2,2) = -0.653643620863612; 	A(2,3) = 0; 
+	A(3,1) = 0; 					A(3,2) = 0; 					A(3,3) = 1;
+	
+	_assert(m_equals(A, B, 1e-10));
+	
+}
+
 int all_tests()
 {
     _verify(m_sum_01);
     _verify(m_sub_01);
     _verify(m_zeros_01);
-
+	
+	
+	
+	_verify(i1_R_x_01);
+	_verify(i1_R_y_01);
+	_verify(i1_R_z_01);
     return 0;
 }
 

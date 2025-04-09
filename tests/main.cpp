@@ -1,11 +1,23 @@
 #include "..\include\matrix.h"
+#include "../include/R_x.hpp"
+#include "../include/R_y.hpp"
+#include "../include/R_z.hpp"
+
 #include <iostream>
 
 using namespace std;
 
 int main() {
-	Matrix aux = R_x(3);
-	cout<<"aux\n"<< aux<<"\n";
+	
+	Matrix aux1 = R_x(3);
+	cout<<"aux1\n"<< aux1<<"\n";
+	
+	Matrix aux2 = R_y(3);
+	cout<<"aux2\n"<< aux2<<"\n";
+	
+	Matrix aux3 = R_z(3);
+	cout<<"aux3\n"<< aux3<<"\n";
+	
 	
 	Matrix v(3);
 	v(2)=5;
