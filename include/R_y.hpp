@@ -1,5 +1,5 @@
-#ifndef _R_x_
-#define _R_x_
+#ifndef _R_y_
+#define _R_y_
 #include "../include/matrix.hpp"
 
 #include<cmath>
