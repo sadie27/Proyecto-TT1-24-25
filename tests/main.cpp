@@ -4,6 +4,13 @@
 using namespace std;
 
 int main() {
+	Matrix aux = R_x(3);
+	cout<<"aux\n"<< aux<<"\n";
+	
+	Matrix v(3);
+	v(2)=5;
+	cout<<v;
+	
     Matrix M1(3, 2);
 	M1(1,1) = 5;
 	
