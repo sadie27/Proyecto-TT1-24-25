@@ -9,7 +9,6 @@ Matrix::Matrix(const int n_row, const int n_column) {
 	this->n_row = n_row;
 	this->n_column = n_column;
 	this->data = (double **) malloc(n_row*sizeof(double *));
-	
     if (this->data == NULL) {
 		cout << "Matrix create: error in data\n";
         exit(EXIT_FAILURE);
@@ -62,7 +61,70 @@ Matrix& Matrix::operator - (Matrix &m) {
 	
 	return *m_aux;
 }
+Matrix& Matrix::operator * (Matrix &m) {
+    if (this->n_column != m.n_row) {
+        cout << "Matrix multiplication: error in dimensions\n";
+        exit(EXIT_FAILURE);
+    }
 
+    Matrix *m_aux = new Matrix(this->n_row, m.n_column);
+
+    for(int i = 1; i <= this->n_row; i++) {
+        for(int j = 1; j <= m.n_column; j++) {
+            double sum = 0;
+            for(int k = 1; k <= this->n_column; k++) {
+                sum += (*this)(i, k) * m(k, j);
+            }
+            (*m_aux)(i, j) = sum;
+        }
+    }
+
+    return *m_aux;
+}
+Matrix& Matrix::operator / (Matrix &m) {
+    if (this->n_row != m.n_row || this->n_column != m.n_column) {
+        cout << "Matrix division: error in dimensions\n";
+        exit(EXIT_FAILURE);
+    }
+
+    Matrix *m_aux = new Matrix(this->n_row, this->n_column);
+
+    for(int i = 1; i <= this->n_row; i++) {
+        for(int j = 1; j <= this->n_column; j++) {
+            if (m(i, j) == 0) {
+                cout << "Matrix division: division by zero\n";
+                exit(EXIT_FAILURE);
+            }
+            (*m_aux)(i, j) = (*this)(i, j) / m(i, j);
+        }
+    }
+
+    return *m_aux;
+}
+Matrix& Matrix::operator = (const Matrix &m) {
+    if (this == &m) {return *this;}
+    this->n_row = m.n_row;
+    this->n_column = m.n_column;
+    this->data = (double **)malloc(m.n_row * sizeof(double *));
+    if (this->data == NULL) {
+        cout << "Matrix assignment: error in data allocation\n";
+        exit(EXIT_FAILURE);
+    }
+    for (int i = 0; i < m.n_row; i++) {
+        this->data[i] = (double *)malloc(m.n_column * sizeof(double));
+        if (this->data[i] == NULL) {
+            cout << "Matrix assignment: error in row allocation\n";
+            exit(EXIT_FAILURE);
+        }
+    }
+    for (int i = 0; i < m.n_row; i++) {
+        for (int j = 0; j < m.n_column; j++) {
+            this->data[i][j] = m.data[i][j];
+        }
+    }
+
+    return *this;
+}
 ostream& operator << (ostream &o, Matrix &m) {
 	for (int i = 1; i <= m.n_row; i++) {
         for (int j = 1; j <= m.n_column; j++)

@@ -75,7 +75,50 @@ int m_sub_01() {
     
     return 0;
 }
+int m_mult_01() {
+    int f1 = 2, c1 = 3;
+    int f2 = 3, c2 = 2;
 
+    Matrix A(f1, c1);
+    A(1,1) = 1; A(1,2) = 2; A(1,3) = 3;
+    A(2,1) = 4; A(2,2) = 5; A(2,3) = 6;
+
+    Matrix B(f2, c2);
+    B(1,1) = 7; B(1,2) = 8;
+    B(2,1) = 9; B(2,2) = 10;
+    B(3,1) = 11; B(3,2) = 12;
+
+    Matrix C(f1, c2);
+    C(1,1) = 58;  C(1,2) = 64;
+    C(2,1) = 139; C(2,2) = 154;
+
+    Matrix R = A * B;
+
+    _assert(m_equals(C, R, 1e-10));
+
+    return 0;
+}
+int m_div_01() {
+    int f = 2, c = 2;
+
+    Matrix A(f, c);
+    A(1,1) = 4; A(1,2) = 6;
+    A(2,1) = 8; A(2,2) = 10;
+
+    Matrix B(f, c);
+    B(1,1) = 2; B(1,2) = 3;
+    B(2,1) = 4; B(2,2) = 5;
+
+    Matrix C(f, c);
+    C(1,1) = 2; C(1,2) = 2;
+    C(2,1) = 2; C(2,2) = 2;
+
+    Matrix R = A / B;
+
+    _assert(m_equals(C, R, 1e-10));
+
+    return 0;
+}
 int m_zeros_01() {
     int f = 3;
     int c = 4;
@@ -89,6 +132,41 @@ int m_zeros_01() {
     
     _assert(m_equals(A, B, 1e-10));
     
+    return 0;
+}
+int m_assign_01() {
+    int f = 2, c = 2; // Dimensions of matrices (2x2)
+
+    Matrix A(f, c);
+    A(1,1) = 1; A(1,2) = 2;
+    A(2,1) = 3; A(2,2) = 4;
+
+    Matrix B(f, c);
+    B = A; // Assignment
+
+    Matrix C(f, c);
+    C(1,1) = 1; C(1,2) = 2;
+    C(2,1) = 3; C(2,2) = 4;
+
+    _assert(m_equals(C, B, 1e-10));
+
+    return 0;
+}
+int m_assign_self_01() {
+    int f = 2, c = 2;
+
+    Matrix A(f, c);
+    A(1,1) = 1; A(1,2) = 2;
+    A(2,1) = 3; A(2,2) = 4;
+
+    A = A; // Self-assignment
+
+    Matrix C(f, c);
+    C(1,1) = 1; C(1,2) = 2;
+    C(2,1) = 3; C(2,2) = 4;
+
+    _assert(m_equals(C, A, 1e-10));
+
     return 0;
 }
 
@@ -133,8 +211,10 @@ int all_tests()
     _verify(m_sum_01);
     _verify(m_sub_01);
     _verify(m_zeros_01);
-	
-	
+    _verify(m_mult_01);
+    _verify(m_div_01);
+    _verify(m_assign_01);
+    _verify(m_assign_self_01);
 	
 	_verify(i1_R_x_01);
 	_verify(i1_R_y_01);
