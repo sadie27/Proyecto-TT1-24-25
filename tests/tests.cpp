@@ -205,9 +205,62 @@ int i1_R_z_01(){
 	_assert(m_equals(A, B, 1e-10));
 	
 }
+int m_eye_01() {
+    int n = 3;
 
+    Matrix A(n, n);
+    A(1,1) = 1; A(1,2) = 0; A(1,3) = 0;
+    A(2,1) = 0; A(2,2) = 1; A(2,3) = 0;
+    A(3,1) = 0; A(3,2) = 0; A(3,3) = 1;
+
+    Matrix B = eye(n);
+
+    _assert(m_equals(A, B, 1e-10));
+
+    return 0;
+}
+int m_transpose_01() {
+    int f = 2, c = 3;
+
+    Matrix A(f, c);
+    A(1,1) = 1; A(1,2) = 2; A(1,3) = 3;
+    A(2,1) = 4; A(2,2) = 5; A(2,3) = 6;
+
+    Matrix B(c, f);
+    B(1,1) = 1; B(1,2) = 4;
+    B(2,1) = 2; B(2,2) = 5;
+    B(3,1) = 3; B(3,2) = 6;
+
+    Matrix R = transpose(A);
+
+    _assert(m_equals(B, R, 1e-10));
+
+    return 0;
+}
+int m_inv_01() {
+    int n = 3;
+
+    Matrix A(n, n);
+    A(1,1) = 1; A(1,2) = 2; A(1,3) = 3;
+    A(2,1) = 0; A(2,2) = 1; A(2,3) = 4;
+    A(3,1) = 5; A(3,2) = 6; A(3,3) = 0;
+
+    Matrix B(n, n);
+    B(1,1) = -24; B(1,2) = 18; B(1,3) = 5;
+    B(2,1) = 20;  B(2,2) = -15; B(2,3) = -4;
+    B(3,1) = -5;  B(3,2) = 4;   B(3,3) = 1;
+
+    Matrix R = inv(A);
+
+    _assert(m_equals(B, R, 1e-10));
+
+    return 0;
+}
+
+// Añadir estas pruebas a la función all_tests()
 int all_tests()
 {
+    // Tests existentes...
     _verify(m_sum_01);
     _verify(m_sub_01);
     _verify(m_zeros_01);
@@ -215,10 +268,16 @@ int all_tests()
     _verify(m_div_01);
     _verify(m_assign_01);
     _verify(m_assign_self_01);
-	
-	_verify(i1_R_x_01);
-	_verify(i1_R_y_01);
-	_verify(i1_R_z_01);
+
+    _verify(i1_R_x_01);
+    _verify(i1_R_y_01);
+    _verify(i1_R_z_01);
+
+    _verify(m_eye_01);
+    _verify(m_transpose_01);
+    _verify(m_inv_01);
+
+
     return 0;
 }
 

@@ -146,3 +146,140 @@ Matrix& zeros(const int n_row, const int n_column) {
 	
 	return (*m_aux);
 }
+Matrix& eye(const int n) {
+    if (n <= 0) {
+        cout << "eye: error in dimension n\n";
+        exit(EXIT_FAILURE);
+    }
+
+    Matrix *m_aux = new Matrix(n, n);
+
+    for(int i = 1; i <= n; i++) {
+        for(int j = 1; j <= n; j++) {
+            (*m_aux)(i,j) = (i == j) ? 1.0 : 0.0;
+        }
+    }
+
+    return *m_aux;
+}
+Matrix& transpose(Matrix &m) {
+    Matrix *m_aux = new Matrix(m.n_column, m.n_row);  // Dimensiones invertidas
+
+    for(int i = 1; i <= m.n_row; i++) {
+        for(int j = 1; j <= m.n_column; j++) {
+            (*m_aux)(j, i) = m(i, j);  // Intercambia filas por columnas
+        }
+    }
+
+    return *m_aux;
+}
+Matrix& inv(Matrix &m) {
+    if (m.n_row != m.n_column) {
+        cout << "Matrix inversion: matrix must be square\n";
+        exit(EXIT_FAILURE);
+    }
+
+    int n = m.n_row;
+    Matrix *inv = &eye(n);  // Usamos la función eye() para la matriz identidad
+    Matrix temp = m;        // Copia de trabajo de la matriz original
+
+    // Eliminación gaussiana
+    for (int col = 1; col <= n; col++) {
+        // Pivoteo parcial
+        double max_val = abs(temp(col, col));
+        int max_row = col;
+        for (int row = col + 1; row <= n; row++) {
+            if (abs(temp(row, col)) > max_val) {
+                max_val = abs(temp(row, col));
+                max_row = row;
+            }
+        }
+
+        // Intercambiar filas si es necesario
+        if (max_row != col) {
+            for (int j = 1; j <= n; j++) {
+                swap(temp(col, j), temp(max_row, j));
+                swap((*inv)(col, j), (*inv)(max_row, j));
+            }
+        }
+
+        // Verificar si la matriz es singular
+        if (temp(col, col) == 0.0) {
+            cout << "Matrix inversion: matrix is singular\n";
+            exit(EXIT_FAILURE);
+        }
+
+        // Normalizar la fila del pivote
+        double pivot = temp(col, col);
+        for (int j = 1; j <= n; j++) {
+            temp(col, j) /= pivot;
+            (*inv)(col, j) /= pivot;
+        }
+
+        // Eliminación hacia adelante
+        for (int row = 1; row <= n; row++) {
+            if (row != col && temp(row, col) != 0.0) {
+                double factor = temp(row, col);
+                for (int j = 1; j <= n; j++) {
+                    temp(row, j) -= temp(col, j) * factor;
+                    (*inv)(row, j) -= (*inv)(col, j) * factor;
+                }
+            }
+        }
+    }
+
+    return *inv;
+}
+
+Matrix& Matrix::operator + (double entrada) {
+    Matrix *m_aux = new Matrix(this->n_row, this->n_column);
+
+    for(int i = 1; i <= this->n_row; i++) {
+        for(int j = 1; j <= this->n_column; j++) {
+            (*m_aux)(i,j) = (*this)(i,j) + entrada;
+        }
+    }
+
+    return *m_aux;
+}
+
+Matrix& Matrix::operator - (double entrada) {
+    Matrix *m_aux = new Matrix(this->n_row, this->n_column);
+
+    for(int i = 1; i <= this->n_row; i++) {
+        for(int j = 1; j <= this->n_column; j++) {
+            (*m_aux)(i,j) = (*this)(i,j) - entrada;
+        }
+    }
+
+    return *m_aux;
+}
+
+Matrix& Matrix::operator * (double entrada) {
+    Matrix *m_aux = new Matrix(this->n_row, this->n_column);
+
+    for(int i = 1; i <= this->n_row; i++) {
+        for(int j = 1; j <= this->n_column; j++) {
+            (*m_aux)(i,j) = (*this)(i,j) * entrada;
+        }
+    }
+
+    return *m_aux;
+}
+
+Matrix& Matrix::operator / (double entrada) {
+    if (entrada == 0.0) {
+        cout << "Matrix division: division by zero\n";
+        exit(EXIT_FAILURE);
+    }
+
+    Matrix *m_aux = new Matrix(this->n_row, this->n_column);
+
+    for(int i = 1; i <= this->n_row; i++) {
+        for(int j = 1; j <= this->n_column; j++) {
+            (*m_aux)(i,j) = (*this)(i,j) / entrada;
+        }
+    }
+
+    return *m_aux;
+}
