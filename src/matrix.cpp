@@ -18,7 +18,25 @@ Matrix::Matrix(const int n_row, const int n_column) {
 		this->data[i] = (double *) malloc(n_column*sizeof(double));
 	}
 }
+Matrix::Matrix(const int n) {
+    if (n <= 0) {
+        cout << "Matrix create: error in n\n";
+        exit(EXIT_FAILURE);
+    }
 
+    this->n_row = n;
+    this->n_column = n;
+    this->data = (double **) malloc(n*sizeof(double *));
+
+    if (this->data == NULL) {
+        cout << "Matrix create: error in data\n";
+        exit(EXIT_FAILURE);
+    }
+
+    for(int i = 0; i < n_row; i++) {
+        this->data[i] = (double *) malloc(n*sizeof(double));
+    }
+}
 double& Matrix::operator () (const int row, const int column) {
 	if (row <= 0 || row > this->n_row || column <= 0 || column > this->n_column) {
 		cout << "Matrix get: error in row/column\n";

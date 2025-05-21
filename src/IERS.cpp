@@ -1,4 +1,3 @@
-#include "../include/SAR_ hpp"
 #include "../include/IERS.hpp"
 //--------------------------------------------------------------------------
 //
@@ -7,55 +6,53 @@
 // Last modified:   2018/02/01   M. Mahooti
 // 
 //--------------------------------------------------------------------------
-tuple<>IERS( eop, Mjd_UTC, interp){
 
+tuple<double, double, double, double, double, double, double, double, double>IERS(const Matrix& eop, double Mjd_UTC, char interp){ 
+	
 	if (nargin == 2){
-	   interp = 'n';
-	}
+		interp = 'n';
+		}
+	
+	if (interp == 'l') {
+        if (i + 1 >= static_cast<int>(eop[0].size())) {
+            throw runtime_error("No hay datos suficientes para interpolación lineal");
+        }
 
-	if (interp =='l'){
-		// linear interpolation
-		double mjd = (floor(Mjd_UTC));
-		int i = find(mjd==eop(4,:),1,'first');
-		preeop = eop(:,i);
-		nexteop = eop(:,i+1);
-		
-		mfme = 1440*(Mjd_UTC-floor(Mjd_UTC));
-		fixf = mfme/1440;
-		// Setting of IERS Earth rotation parameters
-		// (UT1-UTC [s], TAI-UTC [s], x ["], y ["])
-		double x_pole  = preeop(5)+(nexteop(5)-preeop(5))*fixf;
-		double y_pole  = preeop(6)+(nexteop(6)-preeop(6))*fixf;
-		double UT1_UTC = preeop(7)+(nexteop(7)-preeop(7))*fixf;
-		double LOD     = preeop(8)+(nexteop(8)-preeop(8))*fixf;
-		double dpsi    = preeop(9)+(nexteop(9)-preeop(9))*fixf;
-		double deps    = preeop(10)+(nexteop(10)-preeop(10))*fixf;
-		double dx_pole = preeop(11)+(nexteop(11)-preeop(11))*fixf;
-		double dy_pole = preeop(12)+(nexteop(12)-preeop(12))*fixf;
-		double TAI_UTC = preeop(13);
-		
-		x_pole  = x_pole/ Arcs;  // Pole coordinate [rad]
-		y_pole  = y_pole/ Arcs;  // Pole coordinate [rad]
-		dpsi    = dpsi/ Arcs;
-		deps    = deps/ Arcs;
-		dx_pole = dx_pole/ Arcs; // Pole coordinate [rad]
-		dy_pole = dy_pole/ Arcs; // Pole coordinate [rad]
-	}
-	else if (interp =='n'){    
-		mjd = (floor(Mjd_UTC));
-		i = find(mjd==eop(4,:),1,'first');
-		eop = eop(:,i);
-		// Setting of IERS Earth rotation parameters
-		// (UT1-UTC [s], TAI-UTC [s], x ["], y ["])
-		x_pole  = eop(5)/ Arcs;  // Pole coordinate [rad]
-		y_pole  = eop(6)/ Arcs;  // Pole coordinate [rad]
-		UT1_UTC = eop(7);             // UT1-UTC time difference [s]
-		LOD     = eop(8);             // Length of day [s]
-		dpsi    = eop(9)/ Arcs;
-		deps    = eop(10)/ Arcs;
-		dx_pole = eop(11)/ Arcs; // Pole coordinate [rad]
-		dy_pole = eop(12)/ Arcs; // Pole coordinate [rad]
-	TAI_UTC = eop(13);            // TAI-UTC time difference [s]
-	}
-	return tie(x_pole,y_pole,UT1_UTC,LOD,dpsi,deps,dx_pole,dy_pole,TAI_UTC)
+        double mfme = 1440.0 * (Mjd_UTC - floor(Mjd_UTC));
+        double fixf = mfme / 1440.0;
+
+        // linear interpolation
+		double mjd = floor(Mjd_UTC);
+        double x_pole  = eop[4][i] + (eop[4][i + 1] - eop[4][i]) * fixf;
+        double y_pole  = eop[5][i] + (eop[5][i + 1] - eop[5][i]) * fixf;
+        double UT1_UTC = eop[6][i] + (eop[6][i + 1] - eop[6][i]) * fixf;
+        double LOD     = eop[7][i] + (eop[7][i + 1] - eop[7][i]) * fixf;
+        double dpsi    = eop[8][i] + (eop[8][i + 1] - eop[8][i]) * fixf;
+        double deps    = eop[9][i] + (eop[9][i + 1] - eop[9][i]) * fixf;
+        double dx_pole = eop[10][i] + (eop[10][i + 1] - eop[10][i]) * fixf;
+        double dy_pole = eop[11][i] + (eop[11][i + 1] - eop[11][i]) * fixf;
+        double TAI_UTC = eop[12][i];
+
+    } else if (interp == 'n') {
+        x_pole  = eop[4][i];
+        y_pole  = eop[5][i];
+        UT1_UTC = eop[6][i];
+        LOD     = eop[7][i];
+        dpsi    = eop[8][i];
+        deps    = eop[9][i];
+        dx_pole = eop[10][i];
+        dy_pole = eop[11][i];
+        TAI_UTC = eop[12][i];
+
+    }
+
+    // Conversión de segundos de arco a radianes donde corresponde
+    x_pole  /= Arcs;
+    y_pole  /= Arcs;
+    dpsi    /= Arcs;
+    deps    /= Arcs;
+    dx_pole /= Arcs;
+    dy_pole /= Arcs;
+
+    return tie(x_pole, y_pole, UT1_UTC, LOD, dpsi, deps, dx_pole, dy_pole, TAI_UTC);
 }
